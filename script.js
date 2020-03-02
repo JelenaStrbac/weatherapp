@@ -175,7 +175,7 @@ function showWeather() {
     clearElements();
 
     // fetching data - current IP address
-    fetch(`http://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=fetch:ip`)
+    fetch(`https://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=fetch:ip`)
     .then((response) => {
         return response.json();
     })
@@ -201,7 +201,7 @@ function enterCity(e) {
     const loc = document.getElementById('iCity').value;
 
     // fetching data - searching location
-    fetch(`http://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=${loc}`)
+    fetch(`https://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=${loc}`)
     .then((response) => {
         return response.json();
     })
