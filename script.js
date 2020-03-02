@@ -1,7 +1,8 @@
 let weather = [];
 
 let state = {
-    lastUpdate: 0
+    lastUpdate: 0,
+    intervalID: 0
 };
 
 // LOADER functions
@@ -164,7 +165,7 @@ function showWeather() {
     renderElements();
 
     // time
-    var timeAgo = setInterval(updateTime, 1000);
+    state.intervalID = setInterval(updateTime, 1000);
        
 };
 
@@ -175,6 +176,7 @@ function loadCurrentLoc() {
     // show loader
     renderLoader();
     clearElements();
+    clearTime();
 
     // fetching data - current IP address
     fetch(`http://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=fetch:ip`)
@@ -199,6 +201,7 @@ function enterCity() {
     // show loader
     renderLoader();
     clearElements();
+    clearTime();
 
     // get location from input field
     const loc = document.getElementById('iCity').value;
@@ -243,17 +246,16 @@ function updateTime() {
     const minutesAgo = document.getElementById('min');
     
     diff = Math.floor((now - state.lastUpdate) / (1000 * 60));
-    if (minutesAgo) {
         minutesAgo.textContent = diff;
-    }
     
 };
 
 
 
-// function clearTime(){
-//     clearInterval(timeAgo)
-// };
+function clearTime(){
+    clearInterval(state.intervalID);
+    state.intervalID = 0;
+};
 
 
 
