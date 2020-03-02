@@ -134,8 +134,7 @@ function renderElements() {
                         <span class="info-m"><i class="fas fa-temperature-low"></i>${weather.current.feelslike}°</span>
                         <span class="info-text"></i>Feels like</span>
                     </div>
-                    <div><img class="refresh-btn" src="icons/refresh.svg" alt="refresh"> Updated <strong>${start()} ${start() > 0 ? 'min' : 'mins'}</strong>
-                        ago
+                    <div><img class="refresh-btn" src="icons/refresh.svg" alt="refresh"> Updated <strong id="min"></strong> min ago
                     </div>
                 </div>
             </div>
@@ -152,7 +151,7 @@ function clearElements() {
 //display weather on UI
 function showWeather() {
 
-    // remove loader and elements
+    // remove loader
     clearLoader();
     
     // display dynamic background
@@ -163,35 +162,39 @@ function showWeather() {
     
     // render elements
     renderElements();
+
+    // time
+    var timeAgo = setInterval(updateTime, 1000);
        
 };
 
 
 
 // CURRENT IP LOCATION function
-(function loadCurrentLoc() {
+function loadCurrentLoc() {
     // show loader
     renderLoader();
     clearElements();
 
     // fetching data - current IP address
-    fetch(`https://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=fetch:ip`)
+    fetch(`http://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=fetch:ip`)
     .then((response) => {
         return response.json();
     })
     .then((data) => {
         weather = data;
         showWeather();
+        console.log(weather);
+        
     })
     .catch(e => {
         console.log(e);
     });
-})();
+};
 
 
 // SEARCHING LOCATION function
-function enterCity(e) {
-    e.preventDefault();
+function enterCity() {
 
     // show loader
     renderLoader();
@@ -201,7 +204,7 @@ function enterCity(e) {
     const loc = document.getElementById('iCity').value;
 
     // fetching data - searching location
-    fetch(`https://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=${loc}`)
+    fetch(`http://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=${loc}`)
     .then((response) => {
         return response.json();
     })
@@ -214,37 +217,45 @@ function enterCity(e) {
     }); 
 };
 
+
 // event listeners
-document.getElementById('fSearch').addEventListener('submit', enterCity);
+window.addEventListener('load', loadCurrentLoc);
+document.getElementById('fSearch').addEventListener('submit', e => {
+    e.preventDefault();
+    enterCity();
+});
 document.getElementById('wrapper').addEventListener('click', e => {
     const btn = e.target.matches('.refresh-btn, .refresh-btn *'); 
-    
-    if (btn) {
-        showWeather();
+    const loc = document.getElementById('iCity').value;
+
+    if (btn && !loc) {
+        loadCurrentLoc();
+    } else if (btn && loc) {
+        enterCity();
     }
 });
 
-// console.log(state.lastUpdate);
 
 // UPDATE TIME function
 function updateTime() {
     let now = Date.now();
     let diff;
+    const minutesAgo = document.getElementById('min');
     
     diff = Math.floor((now - state.lastUpdate) / (1000 * 60));
-    return diff;
+    if (minutesAgo) {
+        minutesAgo.textContent = diff;
+    }
+    
 };
 
-// test = updateTime()
-// console.log(test);
-// console.log(state.lastUpdate);
 
-function start() {
-    return setInterval(updateTime, 1000);
-}
 
-// var test = start();
-// console.log(test);
+// function clearTime(){
+//     clearInterval(timeAgo)
+// };
+
+
 
 
 
