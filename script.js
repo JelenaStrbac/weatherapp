@@ -41,6 +41,7 @@ function renderWeatherIcons() {
             src = 'storn.svg';
             break;
         case 'Snow':
+        case 'Heavy snow':
             src = 'snowing.svg';
             break;
         default:
@@ -75,6 +76,7 @@ function dynamicBckg() {
             isDay === 'no' ? bckg = 'night-storm.jpg' : bckg = 'storm.jpg';
             break;
         case 'Snow':
+        case 'Heavy snow':
             bckg = 'snow.jpg';
             break;
         default:
