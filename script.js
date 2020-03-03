@@ -35,6 +35,7 @@ function renderWeatherIcons() {
             break;
         case 'Rain':
         case 'Light Rain':
+        case 'Light Rain, Mist':
             src = 'rain.svg';
             break;
         case 'Storm':
@@ -70,6 +71,7 @@ function dynamicBckg() {
             break;
         case 'Rain':
         case 'Light Rain':
+        case 'Light Rain, Mist':
             isDay === 'no' ? bckg = 'night-rain.jpg' : bckg = 'rain.jpg';
             break;
         case 'Storm':
@@ -209,7 +211,7 @@ function enterCity() {
     const loc = document.getElementById('iCity').value;
 
     // fetching data - searching location
-    fetch(`http://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=${loc}`)
+    fetch(`https://cors-anywhere.herokuapp.com/http://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=${loc}`)
     .then((response) => {
         return response.json();
     })
@@ -241,7 +243,7 @@ document.getElementById('wrapper').addEventListener('click', e => {
 });
 
 
-// UPDATE TIME function
+// UPDATE TIME functions
 function updateTime() {
     let now = Date.now();
     let diff;
@@ -251,7 +253,6 @@ function updateTime() {
         minutesAgo.textContent = diff;
     
 };
-
 
 
 function clearTime(){
