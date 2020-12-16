@@ -5,8 +5,6 @@ let state = {
   intervalID: 0,
 };
 
-const key = config.MY_KEY;
-
 // LOADER functions
 function renderLoader() {
   const loader = document.getElementById("loader");
@@ -194,7 +192,7 @@ function loadCurrentLoc() {
     .then((coords) => {
       // fetching data - current location
       fetchWeatherData(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&units=metric&appid=${key}`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&units=metric&appid=30c174ec2ba71f992035ddbd346caad7`
       );
     })
     .catch((err) => {
