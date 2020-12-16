@@ -1,9 +1,8 @@
 html {
   font-family: "Roboto", sans-serif;
   color: white;
-  background: linear-gradient(#d9eef9, #e1fdea);
-  /* background-image: url(background/sunny.jpg);  */
-  background-size: cover;
+  background: linear-gradient(#d9eef9e8, #e1fdeaec), url(cartography.png);
+  background-size: contain;
   font-size: 16px;
 }
 
