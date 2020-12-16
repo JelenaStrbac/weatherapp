@@ -170,7 +170,6 @@ function fetchWeatherData(url) {
     })
     .then((data) => {
       weather = data;
-      console.log(weather);
       showWeather();
     })
     .catch((e) => {
