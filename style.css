@@ -25,11 +25,11 @@ body {
 .logo-title {
   font-size: 0.6rem;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .logo {
-  height: 16px;
+  height: 26px;
   margin: 0rem 0.2rem;
 }
 
