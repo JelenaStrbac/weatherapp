@@ -19,34 +19,44 @@ function clearLoader() {
 // render weather icons
 function renderWeatherIcons() {
   let src;
-  const descr = weather.current.weather_descriptions[0];
-  const isDay = weather.current.is_day;
+  const descr = weather.weather[0].icon;
 
   switch (descr) {
-    case "Sunny":
-    case "Clear":
-      isDay === "no" ? (src = "moon.svg") : (src = "sun.svg");
+    case "01d":
+      src = "sun.svg";
       break;
-    case "Overcast":
-      isDay === "no" ? (src = "moon.svg") : (src = "cloud.svg");
+    case "01n":
+    case "02n":
+      src = "moon.svg";
       break;
-    case "Partly cloudy":
-      isDay === "no" ? (src = "moon.svg") : (src = "cloudy.svg");
+    case "03d":
+    case "03n":
+      src = "cloudy.svg";
       break;
-    case "Rain":
-    case "Light Rain":
-    case "Light Rain, Mist":
+    case "04d":
+    case "04n":
+      src = "cloud.svg";
+      break;
+    case "09d":
+    case "09n":
+    case "10d":
+    case "10n":
       src = "rain.svg";
       break;
-    case "Storm":
+    case "11d":
+    case "11n":
       src = "storn.svg";
       break;
-    case "Snow":
-    case "Heavy snow":
+    case "13d":
+    case "13n":
       src = "snowing.svg";
       break;
+    case "50d":
+    case "50n":
+      src = "mist.svg";
+      break;
     default:
-      src = "";
+      src = "sun.svg";
   }
   return src;
 }
@@ -62,45 +72,50 @@ function renderElements() {
   showAll.style.display = "flex";
   showAll.innerHTML = `        
             <div class="main">
-                <div class="city">${weather.location.name}, ${
-    weather.location.country
-  }</div>
+                <div class="city">${weather.name}, ${weather.sys.country}</div>
                 <div class="date">${currentDate()}</div>
-                <div class="degree">${weather.current.temperature}°</div>
+                <div class="degree">${Math.round(weather.main.temp)}°C</div>
                 <img id="weather-icon" src="icons/${renderWeatherIcons()}">
-                <div class="description">${
-                  weather.current.weather_descriptions
-                }</div>
+                <div class="description">${weather.weather[0].main}</div>
             </div>
             <div>
                 <div class="wpp">
                     <div class="wpp-small">
                         <div class="info-item">
                             <span class="info-m"><i class="fas fa-wind"></i>${
-                              weather.current.wind_speed
-                            } kmph</span>
+                              weather.wind.speed
+                            } m/s</span>
                             <span class="info-text"></i>Wind</span>
                         </div>
 
                         <div class="info-item">
-                            <span class="info-m"><i class="fas fa-tint"></i>${
-                              weather.current.precip
-                            } mm</span>
-                            <span class="info-text">Precipitation</span>
+                            <span class="info-m"><i class="fas fa-${
+                              weather.rain ? "tint" : "cloud"
+                            }"></i>
+                            ${
+                              weather?.rain?.["1h"] ||
+                              weather?.rain?.["3h"] ||
+                              weather.clouds.all
+                            }
+                            ${" "}
+                            ${weather.rain ? "mm" : "%"}</span>
+                            <span class="info-text">${
+                              weather.rain ? "Precipitation" : "Cloudiness"
+                            }</span>
                         </div>
                     </div>
 
                     <div class="wpp-small">
                         <div class="info-item">
                             <span class="info-m"><i class="far fa-clock"></i>${
-                              weather.current.pressure
+                              weather.main.pressure
                             } mb</span>
                             <span class="info-text">Pressure</span>
                         </div>
 
                         <div class="info-item">
                             <span class="info-m"><i class="fas fa-water"></i>${
-                              weather.current.humidity
+                              weather.main.humidity
                             } %</span>
                             <span class="info-text">Humidity</span>
                         </div>
@@ -109,9 +124,9 @@ function renderElements() {
 
                 <div class="feels-like">
                     <div class="feels-like-small">
-                        <span class="info-m"><i class="fas fa-temperature-low"></i>${
-                          weather.current.feelslike
-                        }°</span>
+                        <span class="info-m"><i class="fas fa-temperature-low"></i>${Math.round(
+                          weather.main.feels_like
+                        )}°C</span>
                         <span class="info-text"></i>Feels like</span>
                     </div>
                     <div><img class="refresh-btn" src="icons/refresh.svg" alt="refresh"> Updated <strong id="min"></strong> min ago
@@ -142,54 +157,66 @@ function showWeather() {
   state.intervalID = setInterval(updateTime, 1000);
 }
 
-// CURRENT IP LOCATION function
-function loadCurrentLoc() {
-  // show loader
+function showLoaderAndCleanElements() {
   renderLoader();
   clearElements();
   clearTime();
+}
 
-  // fetching data - current IP address
-  fetch(
-    `http://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=fetch:ip`
-  )
+function fetchWeatherData(url) {
+  fetch(url)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
       weather = data;
-      showWeather();
       console.log(weather);
+      showWeather();
     })
     .catch((e) => {
       console.log(e);
     });
 }
 
+// CURRENT IP LOCATION function
+function loadCurrentLoc() {
+  // show loader
+  showLoaderAndCleanElements();
+
+  function getPosition() {
+    return new Promise((resolve, reject) =>
+      navigator.geolocation.getCurrentPosition(resolve, reject)
+    );
+  }
+  getPosition()
+    .then((position) => position.coords)
+    .then((coords) => {
+      // fetching data - current location
+      fetchWeatherData(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&units=metric&appid=30c174ec2ba71f992035ddbd346caad7`
+      );
+    })
+    .catch((err) => {
+      // if user denies geolocation data show weather for London
+      fetchWeatherData(
+        `https://api.openweathermap.org/data/2.5/weather?q=London&units=metric&appid=30c174ec2ba71f992035ddbd346caad7`
+      );
+      console.error(err.message);
+    });
+}
+
 // SEARCHING LOCATION function
 function enterCity() {
   // show loader
-  renderLoader();
-  clearElements();
-  clearTime();
+  showLoaderAndCleanElements();
 
   // get location from input field
-  const loc = document.getElementById("iCity").value;
+  const loc = document.getElementById("iCity").value.toLowerCase();
 
   // fetching data - searching location
-  fetch(
-    `https://cors-anywhere.herokuapp.com/http://api.weatherstack.com/current?access_key=3d067e465fea96840b85e108ffc5979d&query=${loc}`
-  )
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      weather = data;
-      showWeather();
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+  fetchWeatherData(
+    `https://api.openweathermap.org/data/2.5/weather?q=${loc}&units=metric&appid=30c174ec2ba71f992035ddbd346caad7`
+  );
 }
 
 // event listeners
