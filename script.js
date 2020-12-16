@@ -200,7 +200,7 @@ function loadCurrentLoc() {
     .catch((err) => {
       // if user denies geolocation data show weather for London
       fetchWeatherData(
-        `https://api.openweathermap.org/data/2.5/weather?q=London&units=metric&appid=${key}`
+        `https://api.openweathermap.org/data/2.5/weather?q=London&units=metric&appid=30c174ec2ba71f992035ddbd346caad7`
       );
       console.error(err.message);
     });
