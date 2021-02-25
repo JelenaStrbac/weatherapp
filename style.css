@@ -200,3 +200,52 @@ input:autofill {
   justify-content: center;
   justify-items: center;
 }
+
+@media only screen and (max-width: 480px) {
+  html {
+    width: 100vw;
+  }
+
+  .root,
+  body {
+    width: 100%;
+    height: 100%;
+  }
+
+  #iForm {
+    flex-direction: column;
+    height: 100%;
+  }
+
+  #fSearch {
+    display: flex;
+    width: 300px;
+  }
+
+  .title {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 0.8rem;
+    width: fit-content;
+  }
+
+  .logo-title {
+    margin-left: 0.3rem;
+    margin-bottom: 0.1rem;
+  }
+
+  #wrapper {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .main {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    padding: 30px 0;
+    justify-content: center;
+    align-items: center;
+  }
+}
