@@ -6,7 +6,7 @@ Uses metric system and allows access to current weather data such as temperature
 
 <div align="center" markdown="1">
 
-<img src="./weather-belgrade.png" alt="belgrade-weather-app">
+<img src="./weather-bel.png" alt="belgrade-weather-app">
 
 </div>
 
